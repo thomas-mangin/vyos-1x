@@ -17,6 +17,7 @@
 import os
 
 from vyos import debug
+from vyos import airbag
 from vyos.util import popen
 from vyos.util import cmd
 from vyos.ifconfig.section import Section
@@ -99,11 +100,19 @@ class Control(Section):
         """
         Provide a single primitive w/ error checking for writing to sysfs.
         """
-        self._debug_msg("write '{}' > '{}'".format(value, filename))
+        action = f"write '{value}' > '{filename}'"
+        self._debug_msg(action)
         if os.path.isfile(filename):
-            with open(filename, 'w') as f:
-                f.write(str(value))
-            return True
+            try:
+                with open(filename, 'w') as f:
+                    f.write(str(value))
+                return True
+            except OSError as oss_err:
+                # Linux will report an OSError such as
+                # OSError: [Errno 34] Numerical result out of range
+                # At this point the interface may be unusabled
+                airbag.noteworthy(action)
+                raise oss_err
         return False
 
     def _get_sysfs(self, config, name):
