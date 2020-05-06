@@ -569,3 +569,63 @@ def get_bridge_member_config(conf, br, intf):
 
     conf.set_level(old_level)
     return memberconf
+
+
+def min_mtu(families):
+    """
+    return the minimum expected MTU for the hardware
+    and ip families provided, a list of names: 'ipv4' or 'ipv6'
+    """
+
+    from vyos import vm
+
+    size = {
+        'ipv4': {
+            'default': 576,
+        },
+        'ipv6': {
+            'default': 1280,
+        },
+    }
+
+    hw = {
+    }
+
+    mtu = 576
+    for family in families:
+        mtu = max(mtu, size[family]['default'])
+    for hypervisor in vm.detect():
+        if hypervisor in hw:
+            mtu = max(mtu, hw[hypervisor])
+    return mtu
+
+
+def max_mtu(families):
+    """
+    return the maximum expected possible MTU for the hardware
+    and ip families provided, a list of names: 'ipv4' or 'ipv6'
+    """
+
+    from vyos import vm
+
+    size = {
+        'ipv4': {
+            'default': 1500,
+        },
+        'ipv6': {
+            'default': 1500,
+        },
+    }
+
+    hw = {
+        vm.KVM: 1500,
+        vm.VMWARE: 1500,
+    }
+
+    mtu = 576
+    for family in families:
+        mtu = min(mtu, size[family]['default'])
+    for hypervisor in vm.detect():
+        if hypervisor in hw:
+            mtu = min(mtu, hw[hypervisor])
+    return mtu
