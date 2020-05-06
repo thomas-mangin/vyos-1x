@@ -35,6 +35,11 @@ def noteworthy(msg):
     if something goes wrong later on
     """
     _noteworthy.append(msg)
+    if msg.startswith('RTNETLINK answers: No buffer space available'):
+        _noteworthy.append('if the issue was caused by changing the MTU')
+        _noteworthy.append('you may have set an out of range MTU')
+    if 'failed to run command: ip addr add "fe80::' in msg:
+        _noteworthy.append('you could try to "set interface ... address no-default-link-local"')
 
 
 # emulate a file object
