@@ -141,7 +141,8 @@ if get_version() and insession:
 # Messages to print
 # if the key before the value has not time, syslog takes that as the source of the message
 
-FAULT = """\
+FAULT = """
+----- [start] VyOS Fault Report
 Report Time:      {date}
 Image Version:    VyOS {version}
 Release Train:    {release_train}
@@ -162,6 +163,7 @@ Hardware UUID:    {hardware_uuid}
 
 {trace}
 {note}
+----- [end] VyOS Fault Report
 """
 
 INTRO = """\
