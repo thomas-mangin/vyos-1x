@@ -53,8 +53,8 @@ def validator():
 
     def exit(query, connection):
         def _answer(response):
-            print(query.strip())
-            print(response.decode('utf-8').strip())
+            # print(query.strip())
+            # print(response.decode('utf-8').strip())
             connection.sendall(response)
 
         def _exit(exiting=None, *args):

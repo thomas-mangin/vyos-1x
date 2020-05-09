@@ -10,7 +10,7 @@ setup(
     license = "LGPLv2+",
     keywords = "vyos",
     url = "http://www.vyos.io",
-    packages=["vyos","vyos.ifconfig"],
+    packages=["vyos", "vyos.ifconfig", "vyos.entry", "vyos.validators"],
     long_description="VyOS configuration libraries",
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -21,12 +21,12 @@ setup(
         "console_scripts": [
             "unix_daemon = vyos.entry.unix_daemon:main",
             "validator = vyos.entry.validator:main",
-            "file-exists = vyos.validators.file-exists:main",
-            "fqdn = vyos.validators.fqdn:main",
-            "mac-address = vyos.validators.mac-address:main",
-            "numeric = vyos.validators.numeric:main",
-            "timezone = vyos.validators.timezone:main",
-            "vrf-name = vyos.validators.vrf-name:main",
+            # "file-exists = vyos.validators.file-exists:main",
+            # "fqdn = vyos.validators.fqdn:main",
+            # "mac-address = vyos.validators.mac-address:main",
+            # "numeric = vyos.validators.numeric:main",
+            # "timezone = vyos.validators.timezone:main",
+            # "vrf-name = vyos.validators.vrf-name:main",
         ],
     }
 )
