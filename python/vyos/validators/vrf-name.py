@@ -19,7 +19,9 @@ import re
 import sys
 
 
-if __name__ == '__main__':
+def main():
+    'checks a vrf name is valid'
+
     if len(sys.argv) != 2:
         sys.exit(1)
 
@@ -41,3 +43,7 @@ if __name__ == '__main__':
         sys.exit(f'"{vrf}" is invalid as VRF name as it is an interface name')
 
     sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()

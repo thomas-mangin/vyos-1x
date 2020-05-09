@@ -31,7 +31,9 @@ def exit(strict, message):
     sys.exit()
 
 
-if __name__ == '__main__':
+def main():
+    'checks if a file exists'
+
     parser = argparse.ArgumentParser()
     parser.add_argument("-d", "--directory", type=str, help="File must be present in this directory.")
     parser.add_argument("-e", "--error", action="store_true", help="Tread warnings as errors - change exit code to '1'")
@@ -51,11 +53,13 @@ if __name__ == '__main__':
     if args.directory:
         # remove directory path from path to verify
         rel_filename = args.file.replace(args.directory, '').lstrip('/')
-
         if not os.path.exists(args.directory + '/' + rel_filename):
             exit(args.error,
-                f"'{args.file}' lies outside of '{args.directory}' directory.\n"
+                 f"'{args.file}' lies outside of '{args.directory}' directory.\n"
                   "It will not get preserved during image upgrade!"
             )
-
     sys.exit()
+
+
+if __name__ == '__main__':
+    main()

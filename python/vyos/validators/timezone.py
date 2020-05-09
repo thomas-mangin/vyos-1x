@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 #
-# Copyright (C) 2018-2020 VyOS maintainers and contributors
+# Copyright (C) 2019 VyOS maintainers and contributors
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License version 2 or later as
@@ -14,16 +14,25 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import re
+import argparse
 import sys
 
+from vyos.util import cmd
 
-pattern = "^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$"
+def main():
+    'checks the validity of a timezone'
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--validate", action="store", required=True, help="Check if timezone is valid")
+    args = parser.parse_args()
+
+    tz_data = cmd('find /usr/share/zoneinfo/posix -type f -or -type l | sed -e s:/usr/share/zoneinfo/posix/::')
+    tz_data = tz_data.split('\n')
+
+    if args.validate not in tz_data:
+        sys.exit("the timezone can't be found in the timezone list")
+    sys.exit()
 
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        sys.exit(1)
-    if not re.match(pattern, sys.argv[1]):
-        sys.exit(1)
-    sys.exit(0)
+    main()

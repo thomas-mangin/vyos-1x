@@ -22,9 +22,16 @@ import sys
 pattern = "(?=^.{4,253}$)(^((?!-)[a-zA-Z0-9-]{0,62}[a-zA-Z0-9]\.)+[a-zA-Z]{2,63}$)"
 
 
-if __name__ == '__main__':
+def main():
+    'checks if a name is a valid fully qualified domain'
+
     if len(sys.argv) != 2:
         sys.exit(1)
     if not re.match(pattern, sys.argv[1]):
         sys.exit(1)
     sys.exit(0)
+
+
+if __name__ == '__main__':
+    main()
+
