@@ -195,13 +195,9 @@ def set_host_name(state, data):
 
 
 def get_name_servers(state, tag):
-    ns = []
     data = state['name_servers']
     regex_filter = re.compile(tag)
-    for n in data:
-        if regex_filter.match(data[n]['tag']):
-            ns.append(n)
-    return ns
+    return [n for n in data if regex_filter.match(data[n]['tag'])]
 
 
 def get_option(msg, key):
