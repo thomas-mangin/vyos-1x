@@ -134,11 +134,13 @@ def make_resolv_conf(data):
     with open(RESOLV_CONF_FILE, 'w') as f:
         f.write(resolv_conf)
 
+
 def make_hosts_file(state):
     logger.info("Writing /etc/hosts")
     hosts = hosts_tmpl.render(state)
     with open(HOSTS_FILE, 'w') as f:
         f.write(hosts)
+
 
 def add_hosts(data, entries, tag):
     hosts = data['hosts']
@@ -153,6 +155,7 @@ def add_hosts(data, entries, tag):
         hosts[host]['address'] = e['address']
         hosts[host]['aliases'] = e['aliases']
 
+
 def delete_hosts(data, tag):
     hosts = data['hosts']
     keys_for_deletion = []
@@ -166,6 +169,7 @@ def delete_hosts(data, tag):
     for k in keys_for_deletion:
         del hosts[k]
 
+
 def add_name_servers(data, entries, tag):
     name_servers = data['name_servers']
 
@@ -176,12 +180,14 @@ def add_name_servers(data, entries, tag):
         name_servers[e] = {}
         name_servers[e]['tag'] = tag
 
+
 def delete_name_servers(data, tag):
     name_servers = data['name_servers']
     regex_filter = re.compile(tag)
     for ns in list(name_servers.keys()):
         if regex_filter.match(name_servers[ns]['tag']):
             del name_servers[ns]
+
 
 def set_host_name(state, data):
     if data['host_name']:
@@ -190,6 +196,7 @@ def set_host_name(state, data):
         state['domain_name'] = data['domain_name']
     if 'search_domains' in data:
         state['search_domains'] = data['search_domains']
+
 
 def get_name_servers(state, tag):
     ns = []
@@ -200,11 +207,13 @@ def get_name_servers(state, tag):
             ns.append(n)
     return ns
 
+
 def get_option(msg, key):
     if key in msg:
         return msg[key]
     else:
         raise ValueError("Missing required option \"{0}\"".format(key))
+
 
 def handle_message(msg_json):
     msg = json.loads(msg_json)
@@ -255,6 +264,7 @@ def handle_message(msg_json):
     with open(STATE_FILE, 'w') as f:
         json.dump(STATE, f)
 
+
 def exit_handler(sig, frame):
     """ Clean up the state when shutdown correctly """
     logger.info("Cleaning up state")
@@ -278,7 +288,7 @@ if __name__ == '__main__':
 
     context = zmq.Context()
     socket = context.socket(zmq.REP)
-    
+
     # Set the right permissions on the socket, then change it back
     o_mask = os.umask(0)
     socket.bind(SOCKET_PATH)
