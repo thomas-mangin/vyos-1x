@@ -80,7 +80,7 @@ class VyOSError(Exception):
     pass
 
 
-class Config(object):
+class RealConfig(object):
     """
     The class of config access objects.
 
@@ -508,3 +508,19 @@ class Config(object):
             return(default.copy())
         else:
             return(nodes)
+
+
+class Config(RealConfig):
+    def __init__(self, session_env=None):
+        self._client = None
+        RealConfig.__init__(self, session_env)
+
+    def _get_active(self):
+        if self._client:
+            pass
+        return RealConfig._get_active(self)
+
+    def _get_working(self):
+        if self._client:
+            pass
+        return RealConfig._get_working(self)
