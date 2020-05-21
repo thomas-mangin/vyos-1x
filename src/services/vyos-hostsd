@@ -282,7 +282,7 @@ if __name__ == '__main__':
             try:
                 data = json.load(f)
                 STATE = data
-            except:
+            except Exception:
                 logger.exception(traceback.format_exc())
                 logger.exception("Failed to load the state file, using default")
 
@@ -307,7 +307,7 @@ if __name__ == '__main__':
             resp['data'] = result
         except ValueError as e:
             resp['error'] = str(e)
-        except:
+        except Exception:
             logger.exception(traceback.format_exc())
             resp['error'] = "Internal error"
 
