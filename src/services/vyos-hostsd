@@ -158,16 +158,12 @@ def add_hosts(data, entries, tag):
 
 def delete_hosts(data, tag):
     hosts = data['hosts']
-    keys_for_deletion = []
 
     # You can't delete items from a dict while iterating over it,
     # so we build a list of doomed items first
-    for h in hosts:
+    for h in list(hosts):
         if hosts[h]['tag'] == tag:
-            keys_for_deletion.append(h)
-
-    for k in keys_for_deletion:
-        del hosts[k]
+            del hosts[h]
 
 
 def add_name_servers(data, entries, tag):
