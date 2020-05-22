@@ -201,10 +201,9 @@ def get_name_servers(state, tag):
 
 
 def get_option(msg, key):
-    if key in msg:
-        return msg[key]
-    else:
-        raise ValueError("Missing required option \"{0}\"".format(key))
+    if key not in msg:
+        raise ValueError(f'Missing required option "{key}"')
+    return msg[key]
 
 
 def handle_message(msg_json):
