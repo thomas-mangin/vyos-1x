@@ -70,6 +70,8 @@ import subprocess
 
 import vyos.configtree
 
+STATUS_FILE = '/tmp/vyos-config-status'
+
 
 class VyOSError(Exception):
     """
@@ -92,6 +94,10 @@ class RealConfig(object):
     _show_active =  '/bin/cli-shell-api --show-active-only --show-show-defaults --show-ignore-edit showConfig'
     _show_working = '/bin/cli-shell-api --show-working-only --show-show-defaults --show-ignore-edit showConfig'
 
+    @staticmethod
+    def has_status_file():
+        return os.path.isfile(STATUS_FILE)
+
     def __init__(self, session_env=None):
         self._level = []
         self.__session_env = session_env
@@ -109,7 +115,7 @@ class RealConfig(object):
         # Running config can be obtained either from op or conf mode, it always succeeds
         # once the config system is initialized during boot;
         # before initialization, set to empty string
-        if not os.path.isfile('/tmp/vyos-config-status'):
+        if not self.has_status_file():
             return ''
         return self._run(self._show_active.split())
 
