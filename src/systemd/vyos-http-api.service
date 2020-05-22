@@ -1,6 +1,6 @@
 [Unit]
 Description=VyOS HTTP API service
-After=auditd.service systemd-user-sessions.service time-sync.target vyos-router.service
+After=auditd.service systemd-user-sessions.service time-sync.target vyos-router.service vyos-hostsd.service
 Requires=vyos-router.service
 
 [Service]
@@ -19,6 +19,4 @@ User=root
 Group=vyattacfg
 
 [Install]
-# Installing in a earlier target leaves ExecStartPre waiting
-WantedBy=getty.target
-
+WantedBy=multi-user.target

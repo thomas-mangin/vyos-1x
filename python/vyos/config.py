@@ -69,6 +69,8 @@ import json
 import subprocess
 
 import vyos.configtree
+from vyos.hostsd_client import Client
+from vyos.hostsd_client import VyOSHostsdError
 
 STATUS_FILE = '/tmp/vyos-config-status'
 
@@ -82,7 +84,7 @@ class VyOSError(Exception):
     pass
 
 
-class RealConfig(object):
+class DirectConfig(object):
     """
     The class of config access objects.
 
@@ -150,6 +152,8 @@ class RealConfig(object):
         out = p.stdout.read()
         p.wait()
         p.communicate()
+        if p.returncode == 3:
+            return ''
         if p.returncode != 0:
             raise VyOSError()
         return out.decode('ascii')
@@ -516,12 +520,21 @@ class RealConfig(object):
             return(nodes)
 
 
-class Config(RealConfig):
+class Config(DirectConfig):
     def __init__(self, session_env=None):
-        self._client = None
-        RealConfig.__init__(self, session_env)
+        self._client = Client()
+        DirectConfig.__init__(self, session_env)
 
     def get_working(self):
-        if self._client:
-            pass
-        return RealConfig._get_working(self)
+        # if not self.has_status_file():
+        if True:
+            try:
+                return self._client.get_config_working()
+            except VyOSHostsdError as exc:
+                # import airbag here to prevent cicurlar import
+                import vyos.airbag
+                print('could not connect to hostsd')
+                vyos.airbag.noteworthy('config: could not connect to hotsd')
+                vyos.airbag.noteworthy(str(exc))
+                raise exc from VyOSHostsdError
+        # return DirectConfig.get_working(self)

@@ -1,6 +1,7 @@
 import json
 
-import zmq
+# just to get around a build issue
+# import zmq
 
 
 SOCKET_PATH = "ipc:///run/vyos-hostsd.sock"
@@ -12,6 +13,7 @@ class VyOSHostsdError(Exception):
 
 class Client(object):
     def __init__(self):
+        import zmq
         try:
             context = zmq.Context()
             self.__socket = context.socket(zmq.REQ)
@@ -22,6 +24,7 @@ class Client(object):
             raise VyOSHostsdError("Could not connect to vyos-hostsd")
 
     def _communicate(self, msg):
+        import zmq
         try:
             request = json.dumps(msg).encode()
             self.__socket.send(request)
@@ -67,3 +70,6 @@ class Client(object):
         msg = {'type': 'name_servers', 'op': 'get', 'tag': tag}
         return self._communicate(msg)
 
+    def get_config_working(self):
+        msg = {'type': 'config', 'op': 'get_working', 'tag': ''}
+        return self._communicate(msg)

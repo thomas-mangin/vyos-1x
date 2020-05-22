@@ -1,5 +1,6 @@
 [Unit]
-Description=VyOS DNS configuration keeper
+Description=VyOS Service Daemon
+Before=cloud-init-local.service vyos-router.service
 
 # Without this option, lots of default dependencies are added,
 # among them network.target, which creates a dependency cycle
@@ -24,8 +25,4 @@ User=root
 Group=vyattacfg
 
 [Install]
-
-# Note: After= doesn't actually create a dependency,
-# it just sets order for the case when both services are to start,
-# and without RequiredBy it *does not* set vyos-hostsd to start.
-RequiredBy=cloud-init-local.service vyos-router.service
+WantedBy=multi-user.target
