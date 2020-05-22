@@ -102,8 +102,8 @@ class RealConfig(object):
         self._level = []
         self.__session_env = session_env
 
-        running_config_text = self._get_active()
-        session_config_text = self._get_working() or running_config_text
+        running_config_text = self.get_active()
+        session_config_text = self.get_working() or running_config_text
 
         self._session_config = vyos.configtree.ConfigTree(session_config_text)
         if not running_config_text:
@@ -111,7 +111,7 @@ class RealConfig(object):
             return
         self._running_config = vyos.configtree.ConfigTree(running_config_text)
 
-    def _get_active(self):
+    def get_active(self):
         # Running config can be obtained either from op or conf mode, it always succeeds
         # once the config system is initialized during boot;
         # before initialization, set to empty string
@@ -119,7 +119,7 @@ class RealConfig(object):
             return ''
         return self._run(self._show_active.split())
 
-    def _get_working(self):
+    def get_working(self):
         # Session config ("active") only exists in conf mode.
         # In op mode, we'll just use the same running config for both active and session configs.
         if not self.in_session():
@@ -521,12 +521,7 @@ class Config(RealConfig):
         self._client = None
         RealConfig.__init__(self, session_env)
 
-    def _get_active(self):
-        if self._client:
-            pass
-        return RealConfig._get_active(self)
-
-    def _get_working(self):
+    def get_working(self):
         if self._client:
             pass
         return RealConfig._get_working(self)
