@@ -231,7 +231,7 @@ def handle_name_sever(msg):
         result = get_name_servers(STATE, tag)
         return result
     else:
-        raise ValueError("Unknown operation {0}".format(op))
+        raise ValueError(f'name_server: unknown operation "{op}')
 
 
 def handle_hosts(msg):
@@ -246,7 +246,7 @@ def handle_hosts(msg):
         add_hosts(STATE, entries, tag)
         make_all()
     else:
-        raise ValueError("Unknown message type {0}".format(_type))
+        raise ValueError(f'hosts: unknown operation "{op}')
 
 
 def handle_host_name(msg):
@@ -258,7 +258,7 @@ def handle_host_name(msg):
         set_host_name(STATE, data)
         make_all()
     else:
-        raise ValueError("Unknown message type {0}".format(_type))
+        raise ValueError(f'host_name: unknown operation "{op}')
 
 
 def handle_message(msg_json):
@@ -273,7 +273,7 @@ def handle_message(msg_json):
     elif _type == 'host_name':
         return handle_host_name(msg)
     else:
-        raise ValueError("Unknown message type {0}".format(_type))
+        raise ValueError(f'Unknown message type "{_type}"')
 
 
 def exit_handler(sig, frame):
@@ -318,9 +318,10 @@ if __name__ == '__main__':
             resp['data'] = result
         except ValueError as e:
             resp['error'] = str(e)
-        except Exception:
-            logger.exception(traceback.format_exc())
-            resp['error'] = "Internal error"
+        except Exception as excp:
+            trace = traceback.format_exc()
+            logger.exception(trace)
+            resp['error'] = f"Internal error {excp}\n{trace}"
 
         logger.debug("Sent response: {0}".format(resp))
 
