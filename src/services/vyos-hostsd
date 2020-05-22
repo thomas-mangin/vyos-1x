@@ -209,44 +209,45 @@ def get_option(msg, key):
 def handle_message(msg_json):
     msg = json.loads(msg_json)
 
-    op = get_option(msg, 'op')
     _type = get_option(msg, 'type')
 
-    if op == 'delete':
-        tag = get_option(msg, 'tag')
-
-        if _type == 'name_servers':
+    if _type == 'name_servers':
+        op = get_option(msg, 'op')
+        if op == 'delete':
+            tag = get_option(msg, 'tag')
             delete_name_servers(STATE, tag)
-        elif _type == 'hosts':
-            delete_hosts(STATE, tag)
-        else:
-            raise ValueError("Unknown message type {0}".format(_type))
-    elif op == 'add':
-        tag = get_option(msg, 'tag')
-        entries = get_option(msg, 'data')
-        if _type == 'name_servers':
+        elif op == 'add':
+            tag = get_option(msg, 'tag')
+            entries = get_option(msg, 'data')
             add_name_servers(STATE, entries, tag)
-        elif _type == 'hosts':
+        elif op == 'get':
+            tag = get_option(msg, 'tag')
+            result = get_name_servers(STATE, tag)
+            return result
+        else:
+            raise ValueError("Unknown operation {0}".format(op))
+    elif _type == 'hosts':
+        op = get_option(msg, 'op')
+        if op == 'delete':
+            tag = get_option(msg, 'tag')
+            delete_hosts(STATE, tag)
+        elif op == 'add':
+            tag = get_option(msg, 'tag')
+            entries = get_option(msg, 'data')
             add_hosts(STATE, entries, tag)
         else:
             raise ValueError("Unknown message type {0}".format(_type))
-    elif op == 'set':
-        # Host name/domain name/search domain are set without a tag,
-        # there can be only one anyway
-        data = get_option(msg, 'data')
-        if _type == 'host_name':
+    elif _type == 'host_name':
+        op = get_option(msg, 'op')
+        if op == 'set':
+            # Host name/domain name/search domain are set without a tag,
+            # there can be only one anyway
+            data = get_option(msg, 'data')
             set_host_name(STATE, data)
         else:
             raise ValueError("Unknown message type {0}".format(_type))
-    elif op == 'get':
-        tag = get_option(msg, 'tag')
-        if _type == 'name_servers':
-            result = get_name_servers(STATE, tag)
-        else:
-            raise ValueError("Unimplemented")
-        return result
     else:
-        raise ValueError("Unknown operation {0}".format(op))
+        raise ValueError("Unknown message type {0}".format(_type))
 
     make_resolv_conf(STATE)
     make_hosts_file(STATE)
