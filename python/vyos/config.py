@@ -540,3 +540,14 @@ class Config(object):
             return(default.copy())
         else:
             return(nodes)
+
+
+def monkey_patch():
+    global Config
+    global VyOSError
+
+    from vyos.conf.config import Config as NewConfig
+    from vyos.conf.config import VyOSError as NewVyOSError
+
+    Config = NewConfig
+    VyOSError = NewVyOSError

@@ -1,0 +1,5 @@
+prompt-toolkit
+xmltodict
+lxml
+tabulate
+hurry.filesize

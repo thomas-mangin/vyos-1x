@@ -27,6 +27,11 @@ override_dh_auto_install:
 	# convert the XML to dictionaries
 	env PYTHONPATH=python python3 python/vyos/xml/generate.py
 
+	# does not work .. it was done by hand.
+	# dh_link usr/libexec/vyos/conf_mode usr/libexec/vyos/modules/configuration
+	# dh_link usr/libexec/vyos/op_mode usr/libexec/vyos/modules/operation
+	# dh_link usr/libexec/vyos/completion usr/libexec/vyos/modules/completion
+
 	cd python; python3 setup.py install --install-layout=deb --root ../$(DIR); cd ..
 
 	# Install scripts
@@ -37,10 +42,12 @@ override_dh_auto_install:
 	# Install conf mode scripts
 	mkdir -p $(DIR)/$(VYOS_LIBEXEC_DIR)/conf_mode
 	cp -r src/conf_mode/* $(DIR)/$(VYOS_LIBEXEC_DIR)/conf_mode
+	# cp -r python/vyos/modules/configuration/* $(DIR)/$(VYOS_LIBEXEC_DIR)/conf_mode
 
 	# Install op mode scripts
 	mkdir -p $(DIR)/$(VYOS_LIBEXEC_DIR)/op_mode
 	cp -r src/op_mode/* $(DIR)/$(VYOS_LIBEXEC_DIR)/op_mode
+	# cp -r python/vyos/modules/operation/* $(DIR)/$(VYOS_LIBEXEC_DIR)/op_mode
 
 	# Install validators
 	mkdir -p $(DIR)/$(VYOS_LIBEXEC_DIR)/validators
@@ -91,3 +98,4 @@ override_dh_auto_install:
 
 	# Make directory for generated configuration file
 	mkdir -p $(DIR)/etc/vyos
+

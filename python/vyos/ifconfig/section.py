@@ -20,7 +20,7 @@ import netifaces
 class Section:
     # the known interface prefixes
     _prefixes = {}
-    _classes = []
+    _classes = {}
 
     # class need to define: definition['prefixes']
     # the interface prefixes declared by a class used to name interface with
@@ -36,7 +36,7 @@ class Section:
         if not klass.definition.get('prefixes',[]):
             raise RuntimeError(f'valid interface prefixes not defined for {klass.__name__}')
 
-        cls._classes.append(klass)
+        cls._classes[klass.default['type']] = klass
 
         for ifprefix in klass.definition['prefixes']:
             if ifprefix in cls._prefixes:
@@ -57,6 +57,10 @@ class Section:
         if vlan:
             name = name.rstrip('0123456789.')
         return name
+
+    @classmethod
+    def interface_prefixes(cls, section):
+        return cls._classes[section].definition['prefixes']
 
     @classmethod
     def section(cls, name, vlan=True):
@@ -148,7 +152,7 @@ class Section:
         a particular feature set in their definition such as:
         bondable, broadcast, bridgeable, ...
         """
-        for klass in cls._classes:
+        for name, klass in cls._classes.items():
             if klass.definition[feature]:
                 yield klass.definition['section']
 
