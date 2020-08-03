@@ -86,48 +86,14 @@ class ConfigDiff(object):
         self._effective_config_dict = config.get_cached_dict(effective=True)
         self._key_mangling = key_mangling
 
-    # mirrored from Config; allow path arguments relative to level
     def _make_path(self, path):
-        if isinstance(path, str):
-            path = path.split()
-        elif isinstance(path, list):
-            pass
-        else:
-            raise TypeError("Path must be a whitespace-separated string or a list")
-
-        ret = self._level + path
-        return ret
+        return Config._make_path(self, path)
 
     def set_level(self, path):
-        """
-        Set the *edit level*, that is, a relative config dict path.
-        Once set, all operations will be relative to this path,
-        for example, after ``set_level("system")``, calling
-        ``get_value("name-server")`` is equivalent to calling
-        ``get_value("system name-server")`` without ``set_level``.
-
-        Args:
-            path (str|list): relative config path
-        """
-        if isinstance(path, str):
-            if path:
-                self._level = path.split()
-            else:
-                self._level = []
-        elif isinstance(path, list):
-            self._level = path.copy()
-        else:
-            raise TypeError("Level path must be either a whitespace-separated string or a list")
+        return Config.set_level(self, path)
 
     def get_level(self):
-        """
-        Gets the current edit level.
-
-        Returns:
-            str: current edit level
-        """
-        ret = self._level.copy()
-        return ret
+        return Config.get_level(self)
 
     def _mangle_dict_keys(self, config_dict):
         config_dict = mangle_dict_keys(config_dict, self._key_mangling[0],
