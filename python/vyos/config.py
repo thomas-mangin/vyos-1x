@@ -226,13 +226,7 @@ class Config(object):
         config_dict = vyos.util.get_sub_dict(config_dict, self._make_path(path), get_first_key)
 
         if key_mangling:
-            if not (isinstance(key_mangling, tuple) and \
-                    (len(key_mangling) == 2) and \
-                    isinstance(key_mangling[0], str) and \
-                    isinstance(key_mangling[1], str)):
-                raise ValueError("key_mangling must be a tuple of two strings")
-            else:
-                config_dict = vyos.util.mangle_dict_keys(config_dict, key_mangling[0], key_mangling[1])
+            config_dict = vyos.util.mangle_dict_keys(config_dict, key_mangling[0], key_mangling[1])
         else:
             config_dict = deepcopy(config_dict)
 
