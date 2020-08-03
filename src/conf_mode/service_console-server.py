@@ -21,6 +21,7 @@ from sys import exit
 from vyos.config import Config
 from vyos.configdict import dict_merge
 from vyos.template import render
+from vyos.util import default_mangler
 from vyos.util import call
 from vyos.xml import defaults
 from vyos import ConfigError
@@ -28,14 +29,14 @@ from vyos import ConfigError
 config_file = r'/run/conserver/conserver.cf'
 
 def get_config():
-    conf = Config()
+    conf = Config(mangler=default_mangler)
     base = ['service', 'console-server']
 
     if not conf.exists(base):
         return None
 
     # Retrieve CLI representation as dictionary
-    proxy = conf.get_config_dict(base, key_mangling=('-', '_'))
+    proxy = conf.get_config_dict(base)
     # The retrieved dictionary will look something like this:
     #
     # {'device': {'usb0b2.4p1.0': {'speed': '9600'},

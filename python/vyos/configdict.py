@@ -139,7 +139,7 @@ def leaf_node_changed(conf, path):
     has been changed, None is returned
     """
     from vyos.configdiff import get_config_diff
-    D = get_config_diff(conf, key_mangling=('-', '_'))
+    D = get_config_diff(conf)
     D.set_level(conf.get_level())
     (new, old) = D.get_value_diff(path)
     if new != old:
@@ -161,7 +161,7 @@ def node_changed(conf, path):
     has been changed, None is returned
     """
     from vyos.configdiff import get_config_diff, Diff
-    D = get_config_diff(conf, key_mangling=('-', '_'))
+    D = get_config_diff(conf)
     D.set_level(conf.get_level())
     # get_child_nodes() will return dict_keys(), mangle this into a list with PEP448
     keys = D.get_child_nodes_diff(path, expand_nodes=Diff.DELETE)['delete'].keys()
@@ -175,7 +175,7 @@ def get_removed_vlans(conf, dict):
     from vyos.configdiff import get_config_diff, Diff
 
     # Check vif, vif-s/vif-c VLAN interfaces for removal
-    D = get_config_diff(conf, key_mangling=('-', '_'))
+    D = get_config_diff(conf)
     D.set_level(conf.get_level())
     # get_child_nodes() will return dict_keys(), mangle this into a list with PEP448
     keys = D.get_child_nodes_diff(['vif'], expand_nodes=Diff.DELETE)['delete'].keys()
@@ -215,7 +215,7 @@ def get_interface_dict(config, base, ifname=''):
 
     # setup config level which is extracted in get_removed_vlans()
     config.set_level(base + [ifname])
-    dict = config.get_config_dict([], key_mangling=('-', '_'), get_first_key=True)
+    dict = config.get_config_dict([], get_first_key=True)
 
     # Check if interface has been removed
     if dict == {}:

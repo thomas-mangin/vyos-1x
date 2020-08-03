@@ -29,6 +29,6 @@ class TestVyOSUtil(TestCase):
     def test_key_mangline(self):
         data = {"foo-bar": {"baz-quux": None}}
         expected_data = {"foo_bar": {"baz_quux": None}}
-        new_data = vyos.util.mangle_dict_keys(data, '-', '_')
+        new_data = vyos.util.default_mangler(data)
         self.assertEqual(new_data, expected_data)
 

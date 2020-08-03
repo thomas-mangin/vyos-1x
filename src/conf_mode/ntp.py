@@ -19,6 +19,7 @@ import os
 from vyos.config import Config
 from vyos.configverify import verify_vrf
 from vyos import ConfigError
+from vyos.util import default_mangler
 from vyos.util import call
 from vyos.template import render
 from vyos import airbag
@@ -28,10 +29,10 @@ config_file = r'/etc/ntp.conf'
 systemd_override = r'/etc/systemd/system/ntp.service.d/override.conf'
 
 def get_config():
-    conf = Config()
+    conf = Config(mangler=default_mangler)
     base = ['system', 'ntp']
 
-    ntp = conf.get_config_dict(base, key_mangling=('-', '_'), get_first_key=True)
+    ntp = conf.get_config_dict(base, get_first_key=True)
     return ntp
 
 def verify(ntp):

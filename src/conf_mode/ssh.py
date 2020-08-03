@@ -22,6 +22,7 @@ from sys import exit
 from vyos.config import Config
 from vyos.configdict import dict_merge
 from vyos import ConfigError
+from vyos.util import default_mangler
 from vyos.util import call
 from vyos.template import render
 from vyos.xml import defaults
@@ -32,12 +33,12 @@ config_file = r'/etc/ssh/sshd_config'
 systemd_override = r'/etc/systemd/system/ssh.service.d/override.conf'
 
 def get_config():
-    conf = Config()
+    conf = Config(mangler=default_mangler)
     base = ['service', 'ssh']
     if not conf.exists(base):
         return None
 
-    ssh = conf.get_config_dict(base, key_mangling=('-', '_'), get_first_key=True)
+    ssh = conf.get_config_dict(base, get_first_key=True)
     # We have gathered the dict representation of the CLI, but there are default
     # options which we need to update into the dictionary retrived.
     default_values = defaults(base)

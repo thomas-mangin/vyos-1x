@@ -79,7 +79,7 @@ class Config(object):
     the only state it keeps is relative *config path* for convenient access to config
     subtrees.
     """
-    def __init__(self, session_env=None, config_source=None):
+    def __init__(self, session_env=None, config_source=None, mangler=None):
         if config_source is None:
             self._config_source = ConfigSourceSession(session_env)
         else:
@@ -91,6 +91,7 @@ class Config(object):
         self._dict_cache = {}
         (self._running_config,
          self._session_config) = self._config_source.get_configtree_tuple()
+        self.mangler = mangler
 
     def _make_path(self, path):
         # Backwards-compatibility stuff: original implementation used string paths
@@ -211,12 +212,11 @@ class Config(object):
 
         return config_dict
 
-    def get_config_dict(self, path=[], effective=False, key_mangling=None, get_first_key=False):
+    def get_config_dict(self, path=[], effective=False, get_first_key=False):
         """
         Args:
             path (str list): Configuration tree path, can be empty
             effective=False: effective or session config
-            key_mangling=None: mangle dict keys according to regex and replacement
             get_first_key=False: if k = path[:-1], return sub-dict d[k] instead of {k: d[k]}
 
         Returns: a dict representation of the config under path
@@ -225,8 +225,8 @@ class Config(object):
 
         config_dict = vyos.util.get_sub_dict(config_dict, self._make_path(path), get_first_key)
 
-        if key_mangling:
-            config_dict = vyos.util.mangle_dict_keys(config_dict, key_mangling[0], key_mangling[1])
+        if self.mangler:
+            config_dict = self.mangler(config_dict)
         else:
             config_dict = deepcopy(config_dict)
 

@@ -352,12 +352,6 @@ def mangle_dict_keys(data, regex, replacement):
 
     Returns: dict
     """
-    if not isinstance(key_mangling, tuple) or
-            len(key_mangling) != 2 or \
-            not isinstance(key_mangling[0], str) or \
-            not isinstance(key_mangling[1], str):
-        raise ValueError("key_mangling must be a tuple of two strings")
-
     new_dict = {}
     for key in data.keys():
         new_key = re.sub(regex, replacement, key)
@@ -369,6 +363,11 @@ def mangle_dict_keys(data, regex, replacement):
             new_dict[new_key] = value
 
     return new_dict
+
+
+from functools import partial
+default_mangler = partial(mangle_dict_keys, regex='-', replacement='_')
+
 
 def _get_sub_dict(d, lpath):
     k = lpath[0]

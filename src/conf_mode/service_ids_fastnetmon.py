@@ -20,6 +20,7 @@ from sys import exit
 
 from vyos.config import Config
 from vyos import ConfigError
+from vyos.util import default_mangler
 from vyos.util import call
 from vyos.template import render
 from vyos import airbag
@@ -29,9 +30,9 @@ config_file = r'/etc/fastnetmon.conf'
 networks_list = r'/etc/networks_list'
 
 def get_config():
-    conf = Config()
+    conf = Config(mangler=default_mangler)
     base = ['service', 'ids', 'ddos-protection']
-    fastnetmon = conf.get_config_dict(base, key_mangling=('-', '_'), get_first_key=True)
+    fastnetmon = conf.get_config_dict(base, get_first_key=True)
     return fastnetmon
 
 def verify(fastnetmon):

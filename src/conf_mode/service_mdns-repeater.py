@@ -21,6 +21,7 @@ from netifaces import ifaddresses, interfaces, AF_INET
 
 from vyos.config import Config
 from vyos.template import render
+from vyos.util import default_mangler
 from vyos.util import call
 from vyos import ConfigError
 from vyos import airbag
@@ -29,9 +30,9 @@ airbag.enable()
 config_file = r'/etc/default/mdns-repeater'
 
 def get_config():
-    conf = Config()
+    conf = Config(mangler=default_mangler)
     base = ['service', 'mdns', 'repeater']
-    mdns = conf.get_config_dict(base, key_mangling=('-', '_'), get_first_key=True)
+    mdns = conf.get_config_dict(base, get_first_key=True)
     return mdns
 
 def verify(mdns):

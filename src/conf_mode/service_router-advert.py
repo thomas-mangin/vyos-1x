@@ -21,6 +21,7 @@ from sys import exit
 from vyos.config import Config
 from vyos.configdict import dict_merge
 from vyos.template import render
+from vyos.util import default_mangler
 from vyos.util import call
 from vyos.xml import defaults
 from vyos import ConfigError
@@ -30,9 +31,9 @@ airbag.enable()
 config_file = r'/run/radvd/radvd.conf'
 
 def get_config():
-    conf = Config()
+    conf = Config(mangler=default_mangler)
     base = ['service', 'router-advert']
-    rtradv = conf.get_config_dict(base, key_mangling=('-', '_'), get_first_key=True)
+    rtradv = conf.get_config_dict(base, get_first_key=True)
 
     # We have gathered the dict representation of the CLI, but there are default
     # options which we need to update into the dictionary retrived.

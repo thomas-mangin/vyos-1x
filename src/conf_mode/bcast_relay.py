@@ -21,6 +21,7 @@ from netifaces import interfaces
 from sys import exit
 
 from vyos.config import Config
+from vyos.util import default_mangler
 from vyos.util import call
 from vyos.template import render
 from vyos import ConfigError
@@ -30,10 +31,10 @@ airbag.enable()
 config_file_base = r'/etc/default/udp-broadcast-relay'
 
 def get_config():
-    conf = Config()
+    conf = Config(mangler=default_mangler)
     base = ['service', 'broadcast-relay']
 
-    relay = conf.get_config_dict(base, key_mangling=('-', '_'), get_first_key=True)
+    relay = conf.get_config_dict(base, get_first_key=True)
     return relay
 
 def verify(relay):

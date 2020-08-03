@@ -17,7 +17,7 @@ from enum import IntFlag, auto
 
 from vyos.config import Config
 from vyos.configdict import dict_merge
-from vyos.util import get_sub_dict, mangle_dict_keys
+from vyos.util import get_sub_dict
 from vyos.xml import defaults
 
 class ConfigDiffError(Exception):
@@ -61,30 +61,25 @@ def _dict_from_key_set(key_set, d):
 
     return ret
 
-def get_config_diff(config, key_mangling=None):
+def get_config_diff(config):
     """
     Check type and return ConfigDiff instance.
     """
     if not config or not isinstance(config, Config):
         raise TypeError("argument must me a Config instance")
-    if key_mangling and not (isinstance(key_mangling, tuple) and \
-            (len(key_mangling) == 2) and \
-            isinstance(key_mangling[0], str) and \
-            isinstance(key_mangling[1], str)):
-        raise ValueError("key_mangling must be a tuple of two strings")
 
-    return ConfigDiff(config, key_mangling)
+    return ConfigDiff(config)
 
 class ConfigDiff(object):
     """
     The class of config changes as represented by comparison between the
     session config dict and the effective config dict.
     """
-    def __init__(self, config, key_mangling=None):
+    def __init__(self, config):
         self._level = config.get_level()
         self._session_config_dict = config.get_cached_dict()
         self._effective_config_dict = config.get_cached_dict(effective=True)
-        self._key_mangling = key_mangling
+        self._mangler = config.mangler
 
     def _make_path(self, path):
         return Config._make_path(self, path)
@@ -94,11 +89,6 @@ class ConfigDiff(object):
 
     def get_level(self):
         return Config.get_level(self)
-
-    def _mangle_dict_keys(self, config_dict):
-        config_dict = mangle_dict_keys(config_dict, self._key_mangling[0],
-                                                    self._key_mangling[1])
-        return config_dict
 
     def get_child_nodes_diff(self, path=[], expand_nodes=Diff(0), no_defaults=False):
         """
@@ -136,8 +126,8 @@ class ConfigDiff(object):
                 else:
                     ret[k] = _dict_from_key_set(ret[k], session_dict)
 
-                if self._key_mangling:
-                    ret[k] = self._mangle_dict_keys(ret[k])
+                if self._mangler:
+                    ret[k] = self._mangler(ret[k])
 
                 if k in target_defaults and not no_defaults:
                     default_values = defaults(self._make_path(path))
@@ -179,8 +169,8 @@ class ConfigDiff(object):
                 else:
                     ret[k] = _dict_from_key_set(ret[k], session_dict)
 
-                if self._key_mangling:
-                    ret[k] = self._mangle_dict_keys(ret[k])
+                if self._mangler:
+                    ret[k] = self._mangler(ret[k])
 
                 if k in target_defaults and not no_defaults:
                     default_values = defaults(self._make_path(path))

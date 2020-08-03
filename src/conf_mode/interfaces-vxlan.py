@@ -25,6 +25,7 @@ from vyos.configdict import get_interface_dict
 from vyos.configverify import verify_address
 from vyos.configverify import verify_bridge_delete
 from vyos.configverify import verify_source_interface
+from vyos.util import default_mangler
 from vyos.ifconfig import VXLANIf, Interface
 from vyos import ConfigError
 from vyos import airbag
@@ -35,13 +36,13 @@ def get_config():
     Retrive CLI config as dictionary. Dictionary can never be empty, as at least the
     interface name will be added or a deleted flag
     """
-    conf = Config()
+    conf = Config(mangler=default_mangler)
     base = ['interfaces', 'vxlan']
     vxlan = get_interface_dict(conf, base)
 
     # VXLAN is "special" the default MTU is 1492 - update accordingly
     # as the config_level is already st in get_interface_dict() - we can use []
-    tmp = conf.get_config_dict([], key_mangling=('-', '_'), get_first_key=True)
+    tmp = conf.get_config_dict([], get_first_key=True)
     if 'mtu' not in tmp:
         vxlan['mtu'] = '1450'
 
